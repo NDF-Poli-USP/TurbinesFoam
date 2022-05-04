@@ -57,8 +57,35 @@ class turbineALSource
     public cellSetOption
 {
 
-protected:
+////// Durra modification (05/04/22)
+private:
+  
+         //- Sample and write a particular volume field
+         //template<class Type>
+         void sampleAndWrite
+         (
+             const GeometricField<vector, fvPatchField, volMesh>&
+         );
+//////
 
+protected:
+////// Durra modification (05/02/22)
+// Protected classes
+  
+         //- Class used for grouping field types
+         template<class Type>
+         class fieldGroup
+         :
+             public DynamicList<word>
+         {
+         public:
+             //- Construct null
+             fieldGroup()
+             :
+                 DynamicList<word>(0)
+             {}
+         };
+////// 
     // Protected data
 
         //- Runtime pointer
@@ -151,7 +178,31 @@ protected:
 
         //- Individual blade moments about turbine origin
         List<vector> bladeMoments_;
+		
+		////// Durra modification (02/11/22)
+		//- Wind speed range turbine
+		List<scalar> windSpeedRange_;
+		
+		//- TSR range turbine
+		List<scalar> tsrRange_;
+	
+		//////
 
+		////// Durra modification (05/04/22) - probes.H
+		// Read from dictionary
+  
+         //- Names of fields to probe
+         wordRe fieldSelection_;
+	 
+		//- Categorized scalar/vector/tensor vol fields
+        fieldGroup<vector> vectorFields_;
+
+        //- Cells to be probed (obtained from the locations)
+        labelList elementList_;
+		
+		//- Classify field types, returns the number of fields
+		label classifyFields();
+		//////
 
     // Protected Member Functions
 
@@ -257,6 +308,30 @@ public:
 
             //- Print dictionary values
             virtual void printCoeffs() const;
+		
+		////// Durra modification (05/04/22)
+		 //- Sample a volume field at all locations
+         template<class Type>
+         tmp<Field<Type>> sample
+         (
+             const GeometricField<Type, fvPatchField, volMesh>&
+         ) const;
+ 
+         //- Sample a single vol field on all sample locations
+         template<class Type>
+         tmp<Field<Type>> sample(const word& fieldName) const;
+ 
+         //- Sample a single scalar field on all sample locations
+         template<class Type>
+         tmp<Field<Type>> sampleSurfaceFields(const word& fieldName) const;
+ 
+         //- Sample a surface field at all locations
+         template<class Type>
+         tmp<Field<Type>> sample
+         (
+             const GeometricField<Type, fvsPatchField, surfaceMesh>&
+         ) const;
+		 ////// 
 };
 
 
@@ -265,6 +340,12 @@ public:
 } // End namespace fv
 } // End namespace Foam
 
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+////// Durra modification (05/04/22)
+ #ifdef NoRepository
+     #include "CustomProbesTemplates.C"
+ #endif
+//////
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #endif

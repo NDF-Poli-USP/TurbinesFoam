@@ -48,6 +48,33 @@ namespace fv
 }
 }
 
+// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
+  
+ void Foam::fv::turbineALSource::sampleAndWrite
+ (
+     const GeometricField<vector, fvPatchField, volMesh>& vField
+ )
+ {
+     Field<vector> values(sample(vField));
+  
+     // if (Pstream::master())
+     // {
+         // unsigned int w = IOstream::defaultPrecision() + 7;
+         // OFstream& os = *probeFilePtrs_[vField.name()];
+  
+         // os  << setw(w) << vField.time().timeOutputValue();
+  
+         // forAll(values, probei)
+         // {
+             // if (includeOutOfBounds_ || processor_[probei] != -1)
+             // {
+                 // os  << ' ' << setw(w) << values[probei];
+             // }
+         // }
+         // os  << endl;
+     // }
+ }
+
 
 // * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
 
@@ -168,6 +195,9 @@ void Foam::fv::turbineALSource::rotate(scalar radians)
 
 void Foam::fv::turbineALSource::printPerf()
 {
+	////// Durra modification (02/14/22)
+	Info<< "Controle Victor Durra!!!!" << endl;
+	/////
     Info<< "Azimuthal angle (degrees) of " << name_ << ": " << angleDeg_
         << endl;
     Info<< "Tip speed ratio of " << name_ << ": " << tipSpeedRatio_ << endl;
@@ -315,6 +345,16 @@ bool Foam::fv::turbineALSource::read(const dictionary& dict)
         coeffs_.lookup("rotorRadius") >> rotorRadius_;
         tsrAmplitude_ = coeffs_.lookupOrDefault("tsrAmplitude", 0.0);
         tsrPhase_ = coeffs_.lookupOrDefault("tsrPhase", 0.0);
+		
+		////// Durra modification (02/11/22)
+		coeffs_.lookup("windSpeedRange") >> windSpeedRange_;
+		coeffs_.lookup("RangeTSR") >> tsrRange_;
+		//////
+		
+		////// Durra modification (04/05/22)
+		//coeffs_.lookup("probeLocation") >> static_cast<pointField&>(*this);
+		//coeffs_.lookup("fieldNames") >> fieldSelection_;
+		/////
 
         // Get blade information
         bladesDict_ = coeffs_.subDict("blades");

@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+export C_INCLUDE_PATH=/home/vcdurra/OpenFOAM/vcdurra-7/gitTurbinesFoam/src/fvOptions/turbineALSource/myAddOns:$C_INCLUDE_PATH
+export CPATH=/home/vcdurra/OpenFOAM/vcdurra-7/gitTurbinesFoam/src/fvOptions/turbineALSource/myAddOns:$CPATH
+
+## Dúvidas
 # Parse arguments for library compilation without documentation by default
 . $WM_PROJECT_DIR/wmake/scripts/AllwmakeParseArguments
 
