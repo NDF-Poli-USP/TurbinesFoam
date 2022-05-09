@@ -1,14 +1,18 @@
-#include "probes.H"
- #include "volFields.H"
- #include "surfaceFields.H"
- #include "IOmanip.H"
- #include "interpolation.H"
+#ifndef CustomProbesTemplates_C
+#define CustomProbesTemplates_C
+
+#include "CustomProbes.H"
+#include "volFields.H"
+#include "surfaceFields.H"
+#include "IOmanip.H"
+#include "interpolation.H"
  
  // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
  
  namespace Foam
  {
- 
+ namespace fv
+ {
  template<class T>
  class isNotEqOp
  {
@@ -34,12 +38,14 @@
  };
  
  }
- 
+ }
  
  // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
  
  template<class Type>
- void Foam::probes::sampleAndWrite
+ //void Foam::fv::CustomProbes::sampleAndWrite
+ void Foam::CustomProbes::sampleAndWrite
+
  (
      const GeometricField<Type, fvPatchField, volMesh>& vField
  )
@@ -63,7 +69,8 @@
  
  
  template<class Type>
- void Foam::probes::sampleAndWrite
+ //void Foam::fv::CustomProbes::sampleAndWrite
+  void Foam::CustomProbes::sampleAndWrite
  (
      const GeometricField<Type, fvsPatchField, surfaceMesh>& sField
  )
@@ -87,7 +94,8 @@
  
  
  template<class Type>
- void Foam::probes::sampleAndWrite(const fieldGroup<Type>& fields)
+ //void Foam::fv::CustomProbes::sampleAndWrite(const fieldGroup<Type>& fields)
+ void Foam::CustomProbes::sampleAndWrite(const fieldGroup<Type>& fields)
  {
      forAll(fields, fieldi)
      {
@@ -136,7 +144,9 @@
  
  
  template<class Type>
- void Foam::probes::sampleAndWriteSurfaceFields(const fieldGroup<Type>& fields)
+ //void Foam::fv::CustomProbes::sampleAndWriteSurfaceFields(const fieldGroup<Type>& fields)
+  void Foam::CustomProbes::sampleAndWriteSurfaceFields(const fieldGroup<Type>& fields)
+
  {
      forAll(fields, fieldi)
      {
@@ -187,7 +197,9 @@
  
  template<class Type>
  Foam::tmp<Foam::Field<Type>>
- Foam::probes::sample
+ //Foam::fv::CustomProbes::sample
+  Foam::CustomProbes::sample
+
  (
      const GeometricField<Type, fvPatchField, volMesh>& vField
  ) const
@@ -234,7 +246,7 @@
          }
      }
  
-     Pstream::listCombineGather(values, isNotEqOp<Type>());
+     Pstream::listCombineGather(values, Foam::fv::isNotEqOp<Type>());
      Pstream::listCombineScatter(values);
  
      return tValues;
@@ -243,7 +255,9 @@
  
  template<class Type>
  Foam::tmp<Foam::Field<Type>>
- Foam::probes::sample(const word& fieldName) const
+ //Foam::fv::CustomProbes::sample(const word& fieldName) const
+  Foam::CustomProbes::sample(const word& fieldName) const
+
  {
      return sample
      (
@@ -257,7 +271,9 @@
  
  template<class Type>
  Foam::tmp<Foam::Field<Type>>
- Foam::probes::sample
+ //Foam::fv::CustomProbes::sample
+  Foam::CustomProbes::sample
+
  (
      const GeometricField<Type, fvsPatchField, surfaceMesh>& sField
  ) const
@@ -279,7 +295,7 @@
          }
      }
  
-     Pstream::listCombineGather(values, isNotEqOp<Type>());
+     Pstream::listCombineGather(values, Foam::fv::isNotEqOp<Type>());
      Pstream::listCombineScatter(values);
  
      return tValues;
@@ -288,7 +304,9 @@
  
  template<class Type>
  Foam::tmp<Foam::Field<Type>>
- Foam::probes::sampleSurfaceFields(const word& fieldName) const
+ //Foam::fv::CustomProbes::sampleSurfaceFields(const word& fieldName) const
+  Foam::CustomProbes::sampleSurfaceFields(const word& fieldName) const
+
  {
      return sample
      (
@@ -300,3 +318,4 @@
  }
  
  // ************************************************************************* //
+#endif

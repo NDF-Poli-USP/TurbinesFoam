@@ -40,6 +40,7 @@ SourceFiles
 #include "actuatorLineSource.H"
 #include "volFieldsFwd.H"
 #include "OFstream.H"
+#include "CustomProbes.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -57,34 +58,34 @@ class turbineALSource
     public cellSetOption
 {
 
-////// Durra modification (05/04/22)
-private:
+////// Durra modification (05/04/22) - adicionado no CustomProbesTemplates
+// private:
   
          //- Sample and write a particular volume field
-         //template<class Type>
-         void sampleAndWrite
-         (
-             const GeometricField<vector, fvPatchField, volMesh>&
-         );
+         // template<class Type>
+         // void sampleAndWrite
+         // (
+             // const GeometricField<vector, fvPatchField, volMesh>&
+         // );
 //////
 
 protected:
 ////// Durra modification (05/02/22)
 // Protected classes
   
-         //- Class used for grouping field types
-         template<class Type>
-         class fieldGroup
-         :
-             public DynamicList<word>
-         {
-         public:
-             //- Construct null
-             fieldGroup()
-             :
-                 DynamicList<word>(0)
-             {}
-         };
+         //- Class used for grouping field types - adicionado no CustomProbes.H
+         // template<class Type>
+         // class fieldGroup
+         // :
+             // public DynamicList<word>
+         // {
+         // public:
+             - Construct null
+             // fieldGroup()
+             // :
+                 // DynamicList<word>(0)
+             // {}
+         // };
 ////// 
     // Protected data
 
@@ -199,9 +200,6 @@ protected:
 
         //- Cells to be probed (obtained from the locations)
         labelList elementList_;
-		
-		//- Classify field types, returns the number of fields
-		label classifyFields();
 		//////
 
     // Protected Member Functions
@@ -232,6 +230,18 @@ protected:
 
         //- Print performance
         virtual void printPerf();
+		
+		////// Durra modification (05/04/22) - probes.H
+		//- Classify field types, returns the number of fields
+		label classifyFields();
+		
+		//- Find cells and faces containing probes
+         virtual void findElements(const fvMesh&);
+ 
+         //- Classify field type and Open/close file streams,
+         //  returns number of fields to sample
+         label prepare();
+		//////
 
 
 public:
@@ -320,17 +330,6 @@ public:
          //- Sample a single vol field on all sample locations
          template<class Type>
          tmp<Field<Type>> sample(const word& fieldName) const;
- 
-         //- Sample a single scalar field on all sample locations
-         template<class Type>
-         tmp<Field<Type>> sampleSurfaceFields(const word& fieldName) const;
- 
-         //- Sample a surface field at all locations
-         template<class Type>
-         tmp<Field<Type>> sample
-         (
-             const GeometricField<Type, fvsPatchField, surfaceMesh>&
-         ) const;
 		 ////// 
 };
 

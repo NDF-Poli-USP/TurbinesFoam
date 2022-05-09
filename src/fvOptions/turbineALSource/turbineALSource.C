@@ -48,14 +48,15 @@ namespace fv
 }
 }
 
+////// Durra modification (02/14/22)
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
   
- void Foam::fv::turbineALSource::sampleAndWrite
- (
-     const GeometricField<vector, fvPatchField, volMesh>& vField
- )
- {
-     Field<vector> values(sample(vField));
+ // void Foam::fv::turbineALSource::sampleAndWrite
+ // (
+     // const GeometricField<vector, fvPatchField, volMesh>& vField
+ // )
+ // {
+     // Field<vector> values(sample(vField));
   
      // if (Pstream::master())
      // {
@@ -73,9 +74,9 @@ namespace fv
          // }
          // os  << endl;
      // }
- }
+ //}
 
-
+//////
 // * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
 
 void Foam::fv::turbineALSource::rotateVector
@@ -197,6 +198,8 @@ void Foam::fv::turbineALSource::printPerf()
 {
 	////// Durra modification (02/14/22)
 	Info<< "Controle Victor Durra!!!!" << endl;
+	Info<< "Field name" << fieldSelection_ << endl;
+	Info<< "Probe location" << this << endl;
 	/////
     Info<< "Azimuthal angle (degrees) of " << name_ << ": " << angleDeg_
         << endl;
@@ -352,8 +355,8 @@ bool Foam::fv::turbineALSource::read(const dictionary& dict)
 		//////
 		
 		////// Durra modification (04/05/22)
-		//coeffs_.lookup("probeLocation") >> static_cast<pointField&>(*this);
-		//coeffs_.lookup("fieldNames") >> fieldSelection_;
+		coeffs_.lookup("probeLocation") >> *this;
+		dict.lookup("fieldNames") >> fieldSelection_;
 		/////
 
         // Get blade information
@@ -380,3 +383,9 @@ bool Foam::fv::turbineALSource::read(const dictionary& dict)
 }
 
 // ************************************************************************* //
+////// Durra modification (05/09/22)
+ #ifdef NoRepository
+     #include "CustomProbes.C"
+ #endif
+//////
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
