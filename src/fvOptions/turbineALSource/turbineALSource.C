@@ -355,7 +355,7 @@ bool Foam::fv::turbineALSource::read(const dictionary& dict)
 		//////
 		
 		////// Durra modification (04/05/22)
-		coeffs_.lookup("probeLocation") >> *this;
+		dict.lookup("probeLocation") >> *this;
 		dict.lookup("fieldNames") >> fieldSelection_;
 		/////
 

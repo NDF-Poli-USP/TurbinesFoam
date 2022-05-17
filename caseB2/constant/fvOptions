@@ -1,0 +1,194 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  3.0.x                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvOptions;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+
+turbine1
+{
+    type            axialFlowTurbineALSource;
+    active          on;
+
+    axialFlowTurbineALSourceCoeffs
+    {
+        fieldNames          (U);
+        selectionMode       cellSet; // cellSet || points || cellZone
+        cellSet             turbine1;
+        origin              (0 0 0);
+        axis                (-1 0 0);
+        verticalDirection   (0 0 1);
+        freeStreamVelocity  (8 0 0);
+		probeLocation       (-370 0 0);
+		windSpeedRange      (3.0000 4.0000 5.0000 6.0000 7.0000	8.0000 9.0000 10.0000 11.0000 12 13 14 15 16 17 18 19 20 21 22 23 24 25);
+        RangeTSR            (15.316 11.835 9.895 8.724 7.974 7.543 7.540 7.535 7.125 6.646 6.135 5.697 5.317 4.984 4.691 4.431 4.197 3.988 3.798 3.625 3.467 3.323 3.190);
+		tipSpeedRatio       7.55;
+        rotorRadius         63.0;
+
+        dynamicStall
+        {
+            active          off;
+            dynamicStallModel LeishmanBeddoes;
+        }
+
+        endEffects
+        {
+            active          off;
+            endEffectsModel Shen;
+            GlauertCoeffs
+            {
+                tipEffects  on;
+                rootEffects on;
+            }
+            ShenCoeffs
+            {
+                tipEffects  on;
+                rootEffects on;
+                c1          0.125;
+                c2          21;
+            }
+        }
+
+        blades
+        {
+            blade1
+            {
+                writePerf   true;
+                writeElementPerf true;
+                nElements   48;
+                elementProfiles
+                (
+			#include "NREL5MW_Blade/NREL5MW_48_elementProfiles"
+                );
+                elementData
+                ( 
+                	#include "NREL5MW_Blade/NREL5MW_48_elementData"
+		);
+                collectivePitch 0.0;
+            }
+            blade2
+            {
+                $blade1;
+                writePerf   false;
+                writeElementPerf false;
+                azimuthalOffset 120.0;
+            }
+            blade3
+            {
+                $blade2;
+                azimuthalOffset 240.0;
+            }
+        }
+/*
+        tower
+        {
+            includeInTotalDrag  false; // default is false
+            nElements   2; //6;
+            elementProfiles (cylinder);
+            elementData
+            ( // axial distance (turbine axis), height, diameter
+                (10.0 -90.0 4.50)
+                (10.0  0.00 3.50)
+            );
+        }
+
+        hub
+        {
+            nElements   2;
+            elementProfiles (cylinder);
+            elementData
+            ( // axial distance, height, diameter
+                (0  1.5 3)
+                (0 -1.5 3)
+            );
+        }
+*/
+        profileData
+        {
+            // profile names : DU99W405LM DU99W350LM DU97W300LM DU91W2250LM DU93W210LM NACA64618 circular050 circular035 cylinder
+
+            DU99W405LM
+            {
+                tableType   singleRe; // singleRe (default) || multiRe
+                data // For tableType = singleRe
+                (   // alpha C_l C_d
+                    #include "NREL5MW_foil/DU40_A17"
+                );
+            }
+
+            DU99W350LM
+            {
+                tableType   singleRe; // singleRe (default) || multiRe
+                data // For tableType = singleRe
+                (   // alpha C_l C_d
+                    #include "NREL5MW_foil/DU35_A17"
+                );
+            }
+
+            DU97W300LM
+            {
+                tableType   singleRe; // singleRe (default) || multiRe
+                data // For tableType = singleRe
+                (   // alpha C_l C_d
+                    #include "NREL5MW_foil/DU30_A17"
+                );
+            }
+
+            DU91W2250LM
+            {
+                tableType   singleRe; // singleRe (default) || multiRe
+                data // For tableType = singleRe
+                (   // alpha C_l C_d
+                    #include "NREL5MW_foil/DU25_A17"
+		);
+            }
+
+            DU93W210LM
+            {
+                tableType   singleRe; // singleRe (default) || multiRe
+                data // For tableType = singleRe
+                (   // alpha C_l C_d
+                    #include "NREL5MW_foil/DU21_A17"
+                );
+            }
+
+            NACA64618
+            {
+                tableType   singleRe; // singleRe (default) || multiRe
+                data // For tableType = singleRe
+                (   // alpha C_l C_d
+                    #include "NREL5MW_foil/NACA64_A17"
+                );
+            }
+
+            circular050
+            {
+                data ((-180 0 0.50)(180 0 0.50));
+            }
+
+            circular035
+            {
+                data ((-180 0 0.35)(180 0 0.35));
+            }
+
+            cylinder
+            {
+                //data ((-180 0 1.1)(180 0 1.1));
+                data ((-180 0 0.0)(180 0 0.0)); //no tower nor hub 
+            }
+        }
+    }
+}
+
+// ************************************************************************* //

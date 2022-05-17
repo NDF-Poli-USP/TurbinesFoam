@@ -13,12 +13,12 @@
  {
  //namespace fv
  //{
-     defineTypeNameAndDebug(probes, 0);
+     defineTypeNameAndDebug(CustomProbes, 0);
  
      addToRunTimeSelectionTable
      (
          functionObject,
-         probes,
+         CustomProbes,
          dictionary
      );
  //}
@@ -315,7 +315,7 @@
  // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
  
  //Foam::fv::CustomProbes::~probes()
-  Foam::CustomProbes::~probes()
+  Foam::CustomProbes::~CustomProbes()
  {}
  
  

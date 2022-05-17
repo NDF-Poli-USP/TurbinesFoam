@@ -16,8 +16,6 @@
  
  namespace Foam
  {
- //namespace fv
- //{
 
  // Forward declaration of classes
  class Time;
@@ -25,6 +23,9 @@
  class dictionary;
  class fvMesh;
  class mapPolyMesh;
+ 
+ //namespace fv
+ //{
  
  /*---------------------------------------------------------------------------*\
                            Class probes Declaration
@@ -259,7 +260,7 @@
  
  
  // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-// } // End namespace fv
+ //} // End namespace fv
  } // End namespace Foam
  
  // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

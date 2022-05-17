@@ -1,0 +1,139 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  3.0.x                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      blockMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+convertToMeters 1;
+
+xDown   630;
+xUp     -378;
+
+yLeft   -378;
+yRight   378;
+
+zBot    -378;
+zTop     378;
+
+//dia   126;
+
+vertices
+(
+    ( $xDown    $yLeft          $zBot   )       // 0
+    ( $xDown    $yRight         $zBot   )       // 1
+    ( $xUp      $yRight         $zBot   )       // 2
+    ( $xUp      $yLeft          $zBot   )       // 3
+    ( $xDown    $yLeft          $zTop   )       // 4
+    ( $xDown    $yRight         $zTop   )       // 5
+    ( $xUp      $yRight         $zTop   )       // 6
+    ( $xUp      $yLeft          $zTop   )       // 7
+);
+// Desired cell size at turbine= 5.25
+// Desired expansion per cell: q=1.105/1.1
+
+blocks
+(
+    hex (0 1 2 3 4 5 6 7)
+    //Number of cells (y  x  z)
+(74 49 74) // Case B
+simpleGrading
+        // (block length %, number of cells %, expantion ratio)
+    (
+    ( // y direction
+(       0.375   0.256793524359307       0.165667166416792       )
+(       0.25    0.486412951281386       1                       )
+(       0.375   0.256793524359307       6.03619909502262        )
+    )
+    ( // x direction
+(       0.625   0.549347500642628       0.084615384615385       )
+(       0.375   0.450652499357372       7.45454545454546        )
+    )
+    ( // z direction
+(       0.375   0.256793524359307       0.165667166416792       )
+(       0.25    0.486412951281386       1                       )
+(       0.375   0.256793524359307       6.03619909502262        )
+    )
+    )
+
+);
+
+boundary
+(
+    inlet
+    {
+        type patch;
+        faces
+        (
+            (2 6 7 3)
+        );
+    }
+
+    outlet
+    {
+    type patch;
+    faces
+        (
+            (0 4 5 1)
+        );
+    }
+
+    wall1
+    {
+    type cyclic; //wall;
+	neighbourPatch    wall2;
+        faces
+        (
+            (1 5 6 2)
+            //(4 0 3 7)
+        );
+    }
+    
+    wall2
+    {
+    type cyclic; //wall;
+        neighbourPatch    wall1;
+        faces
+        (
+            //(1 5 6 2)
+            (4 0 3 7)
+        );
+    }
+
+    top
+    {
+    type wall;
+    faces
+        (
+            (4 7 6 5)
+        );
+    }
+
+    bottom
+    {
+    type wall;
+        faces
+        (
+            (0 1 2 3)
+        );
+    }
+);
+
+edges
+(
+);
+
+mergePatchPairs
+(
+);
+
+// ************************************************************************* //

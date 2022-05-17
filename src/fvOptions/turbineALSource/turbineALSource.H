@@ -40,7 +40,7 @@ SourceFiles
 #include "actuatorLineSource.H"
 #include "volFieldsFwd.H"
 #include "OFstream.H"
-#include "CustomProbes.H"
+#include "CustomProbes.H" ////// Durra modification (05/04/22)
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -74,18 +74,18 @@ protected:
 // Protected classes
   
          //- Class used for grouping field types - adicionado no CustomProbes.H
-         // template<class Type>
-         // class fieldGroup
-         // :
-             // public DynamicList<word>
-         // {
-         // public:
-             - Construct null
-             // fieldGroup()
-             // :
-                 // DynamicList<word>(0)
-             // {}
-         // };
+         template<class Type>
+         class fieldGroup
+         :
+             public DynamicList<word>
+         {
+         public:
+           //  - Construct null
+             fieldGroup()
+             :
+                 DynamicList<word>(0)
+             {}
+         };
 ////// 
     // Protected data
 
