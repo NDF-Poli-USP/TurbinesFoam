@@ -1,58 +1,31 @@
- /*---------------------------------------------------------------------------*\
-   =========                 |
-   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-    \\    /   O peration     |
-     \\  /    A nd           | www.openfoam.com
-      \\/     M anipulation  |
- -------------------------------------------------------------------------------
-     Copyright (C) 2011-2016 OpenFOAM Foundation
-     Copyright (C) 2017 OpenCFD Ltd.
- -------------------------------------------------------------------------------
- License
-     This file is part of OpenFOAM.
-  
-     OpenFOAM is free software: you can redistribute it and/or modify it
-     under the terms of the GNU General Public License as published by
-     the Free Software Foundation, either version 3 of the License, or
-     (at your option) any later version.
-  
-     OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
-     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
-     for more details.
-  
-     You should have received a copy of the GNU General Public License
-     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
-  
- \*---------------------------------------------------------------------------*/
-  
-  #ifndef CustomProbestTemplates_H
- #define CustomProbesTemplates_H
+#ifndef CustomProbesTemplates_C
+#define CustomProbesTemplates_C
+
+#include "CustomProbes.H"
+#include "volFields.H"
+#include "surfaceFields.H"
+#include "IOmanip.H"
+#include "interpolation.H"
  
- #include "CustomProbes.H"
- #include "volFields.H"
- #include "surfaceFields.H"
- #include "IOmanip.H"
- #include "interpolation.H"
-  
  // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-  
+ 
  namespace Foam
  {
-  
+ namespace fv
+ {
  template<class T>
  class isNotEqOp
  {
  public:
-  
+ 
      void operator()(T& x, const T& y) const
      {
-         const T unsetVal(-VGREAT*pTraits<T>::one);
-  
+         const T unsetVal(-vGreat*pTraits<T>::one);
+ 
          if (x != unsetVal)
          {
              // Keep x.
-  
+ 
              // Note: should check for y != unsetVal but multiple sample cells
              // already handled in read().
          }
@@ -63,68 +36,66 @@
          }
      }
  };
-  
+ 
  }
-  
-  
+ }
+ 
  // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
-  
+ 
  template<class Type>
- void Foam::probes::sampleAndWrite
+ //void Foam::fv::CustomProbes::sampleAndWrite
+ void Foam::CustomProbes::sampleAndWrite
+
  (
      const GeometricField<Type, fvPatchField, volMesh>& vField
  )
  {
      Field<Type> values(sample(vField));
-  
+ 
      if (Pstream::master())
      {
          unsigned int w = IOstream::defaultPrecision() + 7;
          OFstream& os = *probeFilePtrs_[vField.name()];
-  
-         os  << setw(w) << vField.time().timeOutputValue();
-  
+ 
+         os  << setw(w) << vField.time().timeToUserTime(vField.time().value());
+ 
          forAll(values, probei)
          {
-             if (includeOutOfBounds_ || processor_[probei] != -1)
-             {
-                 os  << ' ' << setw(w) << values[probei];
-             }
+             os  << ' ' << setw(w) << values[probei];
          }
          os  << endl;
      }
  }
-  
-  
+ 
+ 
  template<class Type>
- void Foam::probes::sampleAndWrite
+ //void Foam::fv::CustomProbes::sampleAndWrite
+  void Foam::CustomProbes::sampleAndWrite
  (
      const GeometricField<Type, fvsPatchField, surfaceMesh>& sField
  )
  {
      Field<Type> values(sample(sField));
-  
+ 
      if (Pstream::master())
      {
          unsigned int w = IOstream::defaultPrecision() + 7;
          OFstream& os = *probeFilePtrs_[sField.name()];
-  
-         os  << setw(w) << sField.time().timeOutputValue();
-  
+ 
+         os  << setw(w) << sField.time().timeToUserTime(sField.time().value());
+ 
          forAll(values, probei)
          {
-             if (includeOutOfBounds_ || processor_[probei] != -1)
-             {
-                 os  << ' ' << setw(w) << values[probei];
-             }
+             os  << ' ' << setw(w) << values[probei];
          }
          os  << endl;
      }
  }
-  
-  
+ 
+ 
  template<class Type>
- void Foam::probes::sampleAndWrite(const fieldGroup<Type>& fields)
+ //void Foam::fv::CustomProbes::sampleAndWrite(const fieldGroup<Type>& fields)
+ void Foam::CustomProbes::sampleAndWrite(const fieldGroup<Type>& fields)
  {
      forAll(fields, fieldi)
      {
@@ -150,10 +121,10 @@
          else
          {
              objectRegistry::const_iterator iter = mesh_.find(fields[fieldi]);
-  
+ 
              if
              (
-                 iter.found()
+                 iter != objectRegistry::end()
               && iter()->type()
               == GeometricField<Type, fvPatchField, volMesh>::typeName
              )
@@ -170,10 +141,12 @@
          }
      }
  }
-  
-  
+ 
+ 
  template<class Type>
- void Foam::probes::sampleAndWriteSurfaceFields(const fieldGroup<Type>& fields)
+ //void Foam::fv::CustomProbes::sampleAndWriteSurfaceFields(const fieldGroup<Type>& fields)
+  void Foam::CustomProbes::sampleAndWriteSurfaceFields(const fieldGroup<Type>& fields)
+
  {
      forAll(fields, fieldi)
      {
@@ -199,10 +172,10 @@
          else
          {
              objectRegistry::const_iterator iter = mesh_.find(fields[fieldi]);
-  
+ 
              if
              (
-                 iter.found()
+                 iter != objectRegistry::end()
               && iter()->type()
               == GeometricField<Type, fvsPatchField, surfaceMesh>::typeName
              )
@@ -219,38 +192,40 @@
          }
      }
  }
-  
+ 
  // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
-  
+ 
  template<class Type>
  Foam::tmp<Foam::Field<Type>>
- Foam::probes::sample
+ //Foam::fv::CustomProbes::sample
+  Foam::CustomProbes::sample
+
  (
      const GeometricField<Type, fvPatchField, volMesh>& vField
  ) const
  {
-     const Type unsetVal(-VGREAT*pTraits<Type>::one);
-  
+     const Type unsetVal(-vGreat*pTraits<Type>::one);
+ 
      tmp<Field<Type>> tValues
      (
          new Field<Type>(this->size(), unsetVal)
      );
-  
+ 
      Field<Type>& values = tValues.ref();
-  
+ 
      if (fixedLocations_)
      {
          autoPtr<interpolation<Type>> interpolator
          (
              interpolation<Type>::New(interpolationScheme_, vField)
          );
-  
+ 
          forAll(*this, probei)
          {
              if (elementList_[probei] >= 0)
              {
                  const vector& position = operator[](probei);
-  
+ 
                  values[probei] = interpolator().interpolate
                  (
                      position,
@@ -270,17 +245,19 @@
              }
          }
      }
-  
-     Pstream::listCombineGather(values, isNotEqOp<Type>());
+ 
+     Pstream::listCombineGather(values, Foam::fv::isNotEqOp<Type>());
      Pstream::listCombineScatter(values);
-  
+ 
      return tValues;
  }
-  
-  
+ 
+ 
  template<class Type>
  Foam::tmp<Foam::Field<Type>>
- Foam::probes::sample(const word& fieldName) const
+ //Foam::fv::CustomProbes::sample(const word& fieldName) const
+  Foam::CustomProbes::sample(const word& fieldName) const
+
  {
      return sample
      (
@@ -290,24 +267,26 @@
          )
      );
  }
-  
-  
+ 
+ 
  template<class Type>
  Foam::tmp<Foam::Field<Type>>
- Foam::probes::sample
+ //Foam::fv::CustomProbes::sample
+  Foam::CustomProbes::sample
+
  (
      const GeometricField<Type, fvsPatchField, surfaceMesh>& sField
  ) const
  {
-     const Type unsetVal(-VGREAT*pTraits<Type>::one);
-  
+     const Type unsetVal(-vGreat*pTraits<Type>::one);
+ 
      tmp<Field<Type>> tValues
      (
          new Field<Type>(this->size(), unsetVal)
      );
-  
+ 
      Field<Type>& values = tValues.ref();
-  
+ 
      forAll(*this, probei)
      {
          if (faceList_[probei] >= 0)
@@ -315,17 +294,19 @@
              values[probei] = sField[faceList_[probei]];
          }
      }
-  
-     Pstream::listCombineGather(values, isNotEqOp<Type>());
+ 
+     Pstream::listCombineGather(values, Foam::fv::isNotEqOp<Type>());
      Pstream::listCombineScatter(values);
-  
+ 
      return tValues;
  }
-  
-  
+ 
+ 
  template<class Type>
  Foam::tmp<Foam::Field<Type>>
- Foam::probes::sampleSurfaceFields(const word& fieldName) const
+ //Foam::fv::CustomProbes::sampleSurfaceFields(const word& fieldName) const
+  Foam::CustomProbes::sampleSurfaceFields(const word& fieldName) const
+
  {
      return sample
      (
@@ -335,6 +316,6 @@
          )
      );
  }
-  
+ 
  // ************************************************************************* //
- #endif
+#endif
