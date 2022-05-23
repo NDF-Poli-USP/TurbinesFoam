@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+source /opt/openfoam7/etc/bashrc
+# Parse arguments for library compilation without documentation by default
+. $WM_PROJECT_DIR/wmake/scripts/AllwmakeParseArguments
+
+wmake libso src

@@ -186,6 +186,9 @@ protected:
 		
 		//- TSR range turbine
 		List<scalar> tsrRange_;
+		
+		//- List with the probe locations in the fvOptions
+		List<scalar> probeLocation_;
 	
 		//////
 
@@ -339,12 +342,6 @@ public:
 } // End namespace fv
 } // End namespace Foam
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-////// Durra modification (05/04/22)
- #ifdef NoRepository
-     #include "CustomProbesTemplates.C"
- #endif
-//////
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #endif

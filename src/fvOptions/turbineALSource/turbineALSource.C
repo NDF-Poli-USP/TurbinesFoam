@@ -199,7 +199,7 @@ void Foam::fv::turbineALSource::printPerf()
 	////// Durra modification (02/14/22)
 	Info<< "Controle Victor Durra!!!!" << endl;
 	Info<< "Field name" << fieldSelection_ << endl;
-	Info<< "Probe location" << this << endl;
+	Info<< "Probe location" << probeLocation_ << endl;
 	/////
     Info<< "Azimuthal angle (degrees) of " << name_ << ": " << angleDeg_
         << endl;
@@ -355,7 +355,7 @@ bool Foam::fv::turbineALSource::read(const dictionary& dict)
 		//////
 		
 		////// Durra modification (04/05/22)
-		dict.lookup("probeLocation") >> *this;
+		dict.lookup("probeLocation") >> probeLocation_;
 		dict.lookup("fieldNames") >> fieldSelection_;
 		/////
 

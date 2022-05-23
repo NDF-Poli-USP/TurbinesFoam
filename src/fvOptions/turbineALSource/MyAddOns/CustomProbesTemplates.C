@@ -41,7 +41,7 @@
  {
   
  template<class T>
- class isNotEqOp
+ class CustomisNotEqOp ////// Durra modification (05/23/22)
  {
  public:
   
@@ -70,7 +70,7 @@
  // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
   
  template<class Type>
- void Foam::probes::sampleAndWrite
+ void Foam::CustomProbes::sampleAndWrite
  (
      const GeometricField<Type, fvPatchField, volMesh>& vField
  )
@@ -80,7 +80,7 @@
      if (Pstream::master())
      {
          unsigned int w = IOstream::defaultPrecision() + 7;
-         OFstream& os = *probeFilePtrs_[vField.name()];
+         OFstream& os = *CustomProbesFilePtrs_[vField.name()];
   
          os  << setw(w) << vField.time().timeOutputValue();
   
@@ -97,7 +97,7 @@
   
   
  template<class Type>
- void Foam::probes::sampleAndWrite
+ void Foam::CustomProbes::sampleAndWrite
  (
      const GeometricField<Type, fvsPatchField, surfaceMesh>& sField
  )
@@ -107,7 +107,7 @@
      if (Pstream::master())
      {
          unsigned int w = IOstream::defaultPrecision() + 7;
-         OFstream& os = *probeFilePtrs_[sField.name()];
+         OFstream& os = *CustomProbesFilePtrs_[sField.name()];
   
          os  << setw(w) << sField.time().timeOutputValue();
   
@@ -124,7 +124,7 @@
   
   
  template<class Type>
- void Foam::probes::sampleAndWrite(const fieldGroup<Type>& fields)
+ void Foam::CustomProbes::sampleAndWrite(const fieldGroup<Type>& fields)
  {
      forAll(fields, fieldi)
      {
@@ -173,7 +173,7 @@
   
   
  template<class Type>
- void Foam::probes::sampleAndWriteSurfaceFields(const fieldGroup<Type>& fields)
+ void Foam::CustomProbes::sampleAndWriteSurfaceFields(const fieldGroup<Type>& fields)
  {
      forAll(fields, fieldi)
      {
@@ -224,7 +224,7 @@
   
  template<class Type>
  Foam::tmp<Foam::Field<Type>>
- Foam::probes::sample
+ Foam::CustomProbes::sample
  (
      const GeometricField<Type, fvPatchField, volMesh>& vField
  ) const
@@ -271,7 +271,7 @@
          }
      }
   
-     Pstream::listCombineGather(values, isNotEqOp<Type>());
+     Pstream::listCombineGather(values, CustomisNotEqOp<Type>()); ////// Durra modification (05/23/22)
      Pstream::listCombineScatter(values);
   
      return tValues;
@@ -280,7 +280,7 @@
   
  template<class Type>
  Foam::tmp<Foam::Field<Type>>
- Foam::probes::sample(const word& fieldName) const
+ Foam::CustomProbes::sample(const word& fieldName) const
  {
      return sample
      (
@@ -294,7 +294,7 @@
   
  template<class Type>
  Foam::tmp<Foam::Field<Type>>
- Foam::probes::sample
+ Foam::CustomProbes::sample
  (
      const GeometricField<Type, fvsPatchField, surfaceMesh>& sField
  ) const
@@ -316,7 +316,7 @@
          }
      }
   
-     Pstream::listCombineGather(values, isNotEqOp<Type>());
+     Pstream::listCombineGather(values, CustomisNotEqOp<Type>()); ////// Durra modification (05/23/22)
      Pstream::listCombineScatter(values);
   
      return tValues;
@@ -325,7 +325,7 @@
   
  template<class Type>
  Foam::tmp<Foam::Field<Type>>
- Foam::probes::sampleSurfaceFields(const word& fieldName) const
+ Foam::CustomProbes::sampleSurfaceFields(const word& fieldName) const
  {
      return sample
      (

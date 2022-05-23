@@ -30,7 +30,7 @@
                            Class probes Declaration
  \*---------------------------------------------------------------------------*/
   
- class probes
+ class CustomProbes
  :
      public stateFunctionObject,
      public pointField
@@ -108,7 +108,7 @@
          labelList processor_;
   
          //- Current open files
-         HashPtrTable<OFstream> probeFilePtrs_;
+         HashPtrTable<OFstream> CustomProbesFilePtrs_; //alterado!
   
          // Additional fields for patchProbes
   
@@ -161,22 +161,22 @@
          void sampleAndWriteSurfaceFields(const fieldGroup<Type>&);
   
          //- No copy construct
-         probes(const probes&) = delete;
+         CustomProbes(const CustomProbes&) = delete;
   
          //- No copy assignment
-         void operator=(const probes&) = delete;
+         void operator=(const CustomProbes&) = delete;
   
   
  public:
   
      //- Runtime type information
-     TypeName("probes");
+     TypeName("CustomProbes");
   
   
      // Constructors
   
          //- Construct from Time and dictionary
-         probes
+         CustomProbes
          (
              const word& name,
              const Time& runTime,
@@ -187,7 +187,7 @@
   
   
      //- Destructor
-     virtual ~probes() = default;
+     virtual ~CustomProbes() = default;
   
   
      // Member Functions
@@ -199,13 +199,13 @@
          }
   
          //- Return locations to probe
-         virtual const pointField& probeLocations() const
+         virtual const pointField& CustomProbesLocations() const
          {
              return *this;
          }
   
          //- Return location for probe i
-         virtual const point& probe(const label i) const
+         virtual const point& customprobes(const label i) const
          {
              return operator[](i);
          }

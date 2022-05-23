@@ -25,7 +25,8 @@
      along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
   
  \*---------------------------------------------------------------------------*/
-  
+ #pragma once 
+ 
  #include "CustomProbes.H"
  #include "volFields.H"
  #include "dictionary.H"
@@ -38,12 +39,12 @@
   
  namespace Foam
  {
-     defineTypeNameAndDebug(probes, 0);
+     defineTypeNameAndDebug(CustomProbes, 0);
   
      addToRunTimeSelectionTable
      (
          functionObject,
-         probes,
+         CustomProbes,
          dictionary
      );
  }
@@ -51,7 +52,7 @@
   
  // * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
   
- void Foam::probes::findElements(const fvMesh& mesh)
+ void Foam::CustomProbes::findElements(const fvMesh& mesh)
  {
      DebugInfo<< "probes: resetting sample locations" << endl;
   
@@ -171,7 +172,7 @@
  }
   
   
- Foam::label Foam::probes::prepare()
+ Foam::label Foam::CustomProbes::prepare()
  {
      const label nFields = classifyFields();
   
@@ -218,13 +219,13 @@
          probeDir.clean();  // Remove unneeded ".."
   
          // ignore known fields, close streams for fields that no longer exist
-         forAllIters(probeFilePtrs_, iter)
+         forAllIters(CustomProbesFilePtrs_, iter)
          {
              if (!currentFields.erase(iter.key()))
              {
                  DebugInfo<< "close probe stream: " << iter()->name() << endl;
   
-                 probeFilePtrs_.remove(iter);
+                 CustomProbesFilePtrs_.remove(iter);
              }
          }
   
@@ -239,7 +240,7 @@
   
              DebugInfo<< "open probe stream: " << fout.name() << endl;
   
-             probeFilePtrs_.insert(fieldName, fPtr);
+             CustomProbesFilePtrs_.insert(fieldName, fPtr);
   
              unsigned int w = IOstream::defaultPrecision() + 7;
   
@@ -299,7 +300,7 @@
   
  // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
   
- Foam::probes::probes
+ Foam::CustomProbes::CustomProbes
  (
      const word& name,
      const Time& runTime,
@@ -335,7 +336,7 @@
   
  // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
   
- bool Foam::probes::read(const dictionary& dict)
+ bool Foam::CustomProbes::read(const dictionary& dict)
  {
      dict.readEntry("probeLocations", static_cast<pointField&>(*this));
      dict.readEntry("fields", fieldSelection_);
@@ -363,13 +364,13 @@
  }
   
   
- bool Foam::probes::execute()
+ bool Foam::CustomProbes::execute()
  {
      return true;
  }
   
   
- bool Foam::probes::write()
+ bool Foam::CustomProbes::write()
  {
      if (size() && prepare())
      {
@@ -390,7 +391,7 @@
  }
   
   
- void Foam::probes::updateMesh(const mapPolyMesh& mpm)
+ void Foam::CustomProbes::updateMesh(const mapPolyMesh& mpm)
  {
      DebugInfo<< "probes: updateMesh" << endl;
   
@@ -481,7 +482,7 @@
  }
   
   
- void Foam::probes::movePoints(const polyMesh& mesh)
+ void Foam::CustomProbes::movePoints(const polyMesh& mesh)
  {
      DebugInfo<< "probes: movePoints" << endl;
   
