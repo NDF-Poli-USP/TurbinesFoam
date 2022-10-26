@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+source /opt/spack/opt/spack/linux-centos8-sandybridge/gcc-8.5.0/openfoam-2106-uwp244xqtbuttkntvxfohr5uanbkkono/etc/bashrc
+
+# Parse arguments for library compilation without documentation by default
+. $WM_PROJECT_DIR/wmake/scripts/AllwmakeParseArguments
+
+wmake libso /home/user/turbinesFoam/src
